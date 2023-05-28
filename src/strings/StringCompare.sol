@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-library StringCompose {
-    function equals(string memory str, string memory otherStr) 
+library StringCompare {
+    function equals(string memory str, string memory otherStr)
         internal
         pure
         returns (bool)
@@ -44,6 +44,41 @@ library StringCompose {
         return true;
     }
 
+    function contains(string memory str, string memory substr)
+        internal
+        pure
+        returns (bool)
+    {
+        bytes memory bStr = bytes(str);
+        bytes memory bSubstr = bytes(substr);
+
+        if (bStr.length < bSubstr.length) {
+            return false;
+        }
+
+
+        if (bSubstr.length == 0) {
+            return true;
+        }
+
+        uint256 matchedChars = 0;
+        for (uint256 i = 0; i < bStr.length; i += 1) {
+            if (bStr[i] != bSubstr[matchedChars]) {
+                matchedChars = 0;
+            }
+
+            if (bStr[i] == bSubstr[matchedChars]) {
+                matchedChars += 1;
+            }
+
+            if (matchedChars == bSubstr.length) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     function isAlphanumericOrSpaces(string memory str)
         internal
         pure
@@ -54,8 +89,10 @@ library StringCompose {
             bytes1 char = b[i];
 
             if (
-                !(char >= 0x30 && char <= 0x39) &&
-                !(char == 0x20)
+                !(char >= 0x30 && char <= 0x39) && 
+                !(char >= 0x41 && char <= 0x5A) && 
+                !(char >= 0x61 && char <= 0x7A) && 
+                !(char == 0x20) 
             ) {
                 return false;
             }
